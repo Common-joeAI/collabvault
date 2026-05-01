@@ -1,0 +1,27 @@
+{
+  "name": "collabvault",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "build": "next build",
+    "start": "next start -p 3003"
+  },
+  "dependencies": {
+    "next": "15.3.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cookies-next": "^4.2.1",
+    "canvas-confetti": "^1.9.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "typescript": "^5"
+  }
+}

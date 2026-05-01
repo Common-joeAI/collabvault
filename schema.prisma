@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3-0-x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:/app/data/collabvault.db"
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String
+  displayName     String
+  bio             String?
+  avatarUrl       String?
+  discordHandle   String
+  genres          String   @default("[]")
+  themes          String   @default("[]")
+  isAdmin         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  posts           CollabPost[]
+  challengesAsA   Challenge[] @relation("artistA")
+  challengesAsB   Challenge[] @relation("artistB")
+  sessions        Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model CollabPost {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  content     String
+  genre       String?
+  lookingFor  String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  artistAId   String
+  artistBId   String
+  genre       String
+  theme       String
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  artistA     User     @relation("artistA", fields: [artistAId], references: [id])
+  artistB     User     @relation("artistB", fields: [artistBId], references: [id])
+}
+
+model WheelOption {
+  id        String   @id @default(cuid())
+  type      String
+  value     String
+  addedBy   String?
+  createdAt DateTime @default(now())
+}
