@@ -22,6 +22,8 @@ model User {
   createdAt       DateTime @default(now())
 
   posts           CollabPost[]
+  workspaceFiles  WorkspaceFile[]
+  collabUploads   CollabSubmission[]
   challengesAsA   Challenge[] @relation("artistA")
   challengesAsB   Challenge[] @relation("artistB")
   sessions        Session[]
@@ -54,8 +56,35 @@ model Challenge {
   theme       String
   status      String   @default("active")
   createdAt   DateTime @default(now())
+  completedAt DateTime?
   artistA     User     @relation("artistA", fields: [artistAId], references: [id])
   artistB     User     @relation("artistB", fields: [artistBId], references: [id])
+  files       WorkspaceFile[]
+  submission  CollabSubmission?
+}
+
+model WorkspaceFile {
+  id          String   @id @default(cuid())
+  challengeId String
+  uploaderId  String
+  title       String
+  url         String
+  note        String?
+  createdAt   DateTime @default(now())
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  uploader    User      @relation(fields: [uploaderId], references: [id])
+}
+
+model CollabSubmission {
+  id          String   @id @default(cuid())
+  challengeId String   @unique
+  uploaderId  String
+  title       String
+  audioUrl    String
+  notes       String?
+  createdAt   DateTime @default(now())
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  uploader    User      @relation(fields: [uploaderId], references: [id])
 }
 
 model WheelOption {
