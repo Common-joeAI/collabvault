@@ -1,20 +1,30 @@
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { prisma } from './db'
 
 export async function getSession() {
   let token: string | undefined
 
-  // 1. Try Authorization: Bearer <token> header (localStorage flow)
-  const headerStore = await headers()
-  const auth = headerStore.get('authorization')
-  if (auth?.startsWith('Bearer ')) {
-    token = auth.slice(7)
+  try {
+    // Try Authorization: Bearer <token> header (localStorage flow)
+    // Only available in dynamic routes, not static generation
+    const { headers } = await import('next/headers')
+    const headerStore = await headers()
+    const auth = headerStore.get('authorization')
+    if (auth?.startsWith('Bearer ')) {
+      token = auth.slice(7)
+    }
+  } catch {
+    // headers() not available during static generation — skip
   }
 
-  // 2. Fall back to cookie
+  // Fall back to cookie
   if (!token) {
-    const cookieStore = await cookies()
-    token = cookieStore.get('cv_token')?.value
+    try {
+      const cookieStore = await cookies()
+      token = cookieStore.get('cv_token')?.value
+    } catch {
+      // cookies() not available during static generation — skip
+    }
   }
 
   if (!token) return null
