@@ -12,12 +12,22 @@ export default function LoginPage() {
     setLoading(true); setError('')
     try {
       const res = await fetch('/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(form),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error || 'Login failed'); setLoading(false); return }
-      window.location.href = '/board'
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        setLoading(false)
+        return
+      }
+      // Save token to localStorage to bypass Cloudflare cookie issues
+      if (data.token) {
+        localStorage.setItem('cv_token', data.token)
+      }
+      window.location.replace('/board')
     } catch {
       setError('Network error — please try again')
       setLoading(false)
@@ -29,6 +39,7 @@ export default function LoginPage() {
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <div style={{ fontSize: 40, marginBottom: 12 }}>🎡</div>
         <h1 style={{ fontSize: 28, fontWeight: 800 }}>Welcome back</h1>
+        <p style={{ color: '#9ca3af', marginTop: 8 }}>Log in to your CollabVault account</p>
       </div>
 
       <div className="card">
