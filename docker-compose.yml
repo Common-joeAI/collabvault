@@ -1,18 +1,20 @@
 services:
   collabvault:
     build: .
+    image: collabvault:latest
     container_name: collabvault
     restart: unless-stopped
     network_mode: host
     environment:
       NODE_ENV: production
       PORT: "3003"
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: "file:/app/data/collabvault.db"
       APP_BASE_URL: "https://collabs.darkkeangelzz.live"
       JWT_SECRET: "collabvault-secret-2026-changeme"
-      DISCORD_BOT_TOKEN: ""
-      HOSTNAME: "0.0.0.0"
+      DISCORD_BOT_TOKEN: "${DISCORD_BOT_TOKEN}"
+      DISCORD_GUILD_ID: "${DISCORD_GUILD_ID}"
     volumes:
       - collabvault_data:/app/data
-      - /app/.next/static:/app/.next/static
 volumes:
   collabvault_data:
